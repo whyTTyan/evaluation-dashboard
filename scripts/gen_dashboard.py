@@ -36,6 +36,12 @@ print(f'已排除: {before - len(df)} 条 ({",".join(EXCLUDE)})')
 # === 邀评数据 ===
 inv_lookup = {}
 if SRC_INV and os.path.exists(SRC_INV):
+    # Handle ZIP for inv data too
+    if SRC_INV.endswith('.zip'):
+        with zipfile.ZipFile(SRC_INV) as z:
+            csv_name = [n for n in z.namelist() if n.endswith('.csv')][0]
+            z.extract(csv_name, os.path.dirname(SRC_INV))
+            SRC_INV = os.path.join(os.path.dirname(SRC_INV), csv_name)
     if SRC_INV.endswith('.csv'):
         for enc in ['gbk','gb18030','utf-8','utf-8-sig']:
             try:
